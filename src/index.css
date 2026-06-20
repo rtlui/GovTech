@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-beige: #f5f3eb;
+  --color-brand-beige-dark: #e8e4d3;
+  --color-brand-gold: #d4af37;
+  --color-brand-gold-dark: #b5952f;
+  --color-brand-black: #111111;
+  --color-brand-gray: #333333;
+  --color-brand-light: #fafafa;
+}
+
+@layer base {
+  :root {
+    font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    background-color: var(--color-brand-light);
+    color: var(--color-brand-black);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--color-brand-light);
+  }
+}
+
+/* Custom Utilities for glassmorphism and smooth scroll */
+@layer utilities {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+}
