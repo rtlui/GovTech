@@ -75,6 +75,21 @@ export const apiService = {
   getProfile: () =>
     request('/usuario/perfil'),
 
+  verifyEmail: (token: string) =>
+    request(`/verify?token=${token}`),
+
+  forgotPassword: (email: string) =>
+    request('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    }),
+
+  resetPassword: (token: string, nueva_password: string) =>
+    request('/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, nueva_password })
+    }),
+
   createRequest: async (data: any) => {
     const res = await request('/solicitudes', {
       method: 'POST',

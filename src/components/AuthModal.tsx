@@ -17,6 +17,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   // Form State
   const [correo, setCorreo] = useState('');
@@ -43,6 +44,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
     setLoading(true);
 
     try {
@@ -61,13 +63,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
           cedula,
           telefono
         });
-        // Auto login after register
-        await login({ correo, contrasena });
-        onClose();
-        window.location.href = '/dashboard';
+        setSuccessMsg('Te hemos enviado un correo de verificación. Por favor revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta antes de iniciar sesión.');
       }
     } catch (err: any) {
-      setError(err.message || 'Ocurrió un error. Verifique sus datos.');
+      if (err.message && (err.message.includes('403') || err.message.toLowerCase().includes('verif'))) {
+        setError('Debes verificar tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.');
+      } else {
+        setError(err.message || 'Ocurrió un error. Verifique sus datos.');
+      }
     } finally {
       setLoading(false);
     }
@@ -109,6 +112,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
             {error && (
               <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
                 {error}
+              </div>
+            )}
+            {successMsg && (
+              <div className="mb-4 p-3 bg-green-50 text-green-700 text-sm rounded-lg border border-green-100">
+                {successMsg}
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -188,7 +196,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 <div className="flex items-center justify-between">
                   <label className="block text-sm font-medium text-gray-700">Contraseña</label>
                   {view === 'login' && (
-                    <button type="button" className="text-xs font-medium text-yellow-700 hover:text-yellow-800 transition-colors">
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        onClose();
+                        navigate('/forgot-password');
+                      }}
+                      className="text-xs font-medium text-yellow-700 hover:text-yellow-800 transition-colors"
+                    >
                       ¿Olvidó su contraseña?
                     </button>
                   )}

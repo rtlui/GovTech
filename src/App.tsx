@@ -4,6 +4,9 @@ import { Dashboard } from './pages/Dashboard';
 import { Inbox } from './pages/Inbox';
 import { Portal } from './pages/Portal';
 import { Landing } from './pages/Landing';
+import { Verify } from './pages/Verify';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ adminOnly = false }: { adminOnly?: boolean }) => {
@@ -18,6 +21,9 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/verify" element={<Verify />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/dashboard" element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           {/* Admin only route */}
