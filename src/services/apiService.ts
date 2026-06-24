@@ -21,7 +21,33 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
       window.location.href = '/';
     }
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || `HTTP error! status: ${response.status}`);
+    let errMsg = '';
+    if (error && error.detail) {
+      if (typeof error.detail === 'string') {
+        errMsg = error.detail;
+      } else if (Array.isArray(error.detail)) {
+        errMsg = error.detail.map((err: any) => {
+          let msg = err.msg || JSON.stringify(err);
+          const isPassword = err.loc && (err.loc.includes('contrasena') || err.loc.includes('password'));
+          if (isPassword) {
+            if (msg.includes('at least 8 characters')) {
+              msg = 'La contraseña debe tener al menos 8 caracteres';
+            }
+          }
+          return msg;
+        }).join(', ');
+      } else if (typeof error.detail === 'object') {
+        let msg = error.detail.msg || JSON.stringify(error.detail);
+        const isPassword = error.detail.loc && (error.detail.loc.includes('contrasena') || error.detail.loc.includes('password'));
+        if (isPassword) {
+          if (msg.includes('at least 8 characters')) {
+            msg = 'La contraseña debe tener al menos 8 caracteres';
+          }
+        }
+        errMsg = msg;
+      }
+    }
+    throw new Error(errMsg || `HTTP error! status: ${response.status}`);
   }
 
   if (response.status === 204) return null;
@@ -51,7 +77,6 @@ export const apiService = {
       method: 'POST',
       body: JSON.stringify(data)
     });
-    window.location.reload();
     return res;
   },
 
@@ -69,7 +94,6 @@ export const apiService = {
       method: 'PUT',
       body: JSON.stringify({ estado })
     });
-    window.location.reload();
     return res;
   },
 
