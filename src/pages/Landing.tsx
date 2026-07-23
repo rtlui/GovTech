@@ -109,8 +109,8 @@ export const Landing: React.FC = () => {
                     <ShieldCheck size={24} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-1">Totalmente Seguro</h4>
-                    <p className="text-sm text-gray-500">Tus datos están protegidos y encriptados.</p>
+                    <h4 className="font-bold text-gray-900 mb-1">Autenticación Segura</h4>
+                    <p className="text-sm text-gray-500">Tu información se protege mediante autenticación segura y cifrado de contraseñas.</p>
                   </div>
                 </div>
 
@@ -120,7 +120,7 @@ export const Landing: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 mb-1">Conexión Institucional</h4>
-                    <p className="text-sm text-gray-500">Comunicación directa con los ministerios.</p>
+                    <p className="text-sm text-gray-500">Pensado para instituciones dominicanas.</p>
                   </div>
                 </div>
               </div>
