@@ -1,4 +1,4 @@
-export type RequestStatus = 'Pendiente' | 'En proceso' | 'Resuelta';
+export type RequestStatus = 'Pendiente' | 'Progreso' | 'Resuelta';
 export type RequestPriority = 'Alta' | 'Media' | 'Baja';
 export type RequestCategory = 'Petición' | 'Queja' | 'Sugerencia' | 'Reclamo' | 'Denuncia';
 
