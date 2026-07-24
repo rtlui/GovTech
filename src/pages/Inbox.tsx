@@ -203,7 +203,7 @@ export const Inbox = () => {
             >
               {status === 'Todos' ? 'Todos' : 
                status === 'Pendiente' ? 'Pendientes' :
-               status === 'En Proceso' ? 'En Proceso' : 'Resueltos'}
+               status === 'En proceso' ? 'En proceso' : 'Resueltos'}
               
               {filterStatus === status && (
                 <motion.div 
@@ -299,20 +299,20 @@ export const Inbox = () => {
                     </div>
                     
                     <div>
-                      <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-1.5">En Proceso / Estado</label>
+                      <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-1.5">En proceso / Estado</label>
                       <div className="relative">
                         <select 
                           className={cn(
                             "w-full pl-10 pr-4 py-2.5 rounded-xl border appearance-none focus:outline-none focus:ring-2 focus:ring-brand-gold/50 font-medium transition-colors",
                             draftRequest.estado === 'Pendiente' ? "bg-yellow-50 border-yellow-200 text-yellow-800" :
-                            draftRequest.estado === 'En Proceso' ? "bg-blue-50 border-blue-200 text-blue-800" :
+                            draftRequest.estado === 'En proceso' ? "bg-blue-50 border-blue-200 text-blue-800" :
                             "bg-green-50 border-green-200 text-green-800"
                           )}
                           value={draftRequest.estado}
                           onChange={(e) => handleDraftChange('estado', e.target.value)}
                         >
                           <option value="Pendiente">Pendiente de Revisión</option>
-                          <option value="En Proceso">En Proceso</option>
+                          <option value="En proceso">En proceso</option>
                           <option value="Resuelta">Resuelta</option>
                         </select>
                         <div className="absolute left-3 top-1/2 -translate-y-1/2">
