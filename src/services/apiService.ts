@@ -121,6 +121,22 @@ export const apiService = {
     return res;
   },
 
+  updateRequestPriority: async (id: number, prioridad: string) => {
+    const res = await request(`/admin/solicitudes/${id}/prioridad`, {
+      method: 'PUT',
+      body: JSON.stringify({ prioridad })
+    });
+    return res;
+  },
+
+  updateRequestCategory: async (id: number, tipo_solicitud: string) => {
+    const res = await request(`/admin/solicitudes/${id}/categoria`, {
+      method: 'PUT',
+      body: JSON.stringify({ tipo_solicitud })
+    });
+    return res;
+  },
+
   getAttachments: (id: number) =>
     request(`/admin/solicitudes/${id}/anexos`),
 

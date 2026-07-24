@@ -95,29 +95,54 @@ export const Inbox = () => {
   };
 
   const handleSaveChanges = async () => {
-    if (!draftRequest || !user?.es_admin) return;
+    if (!draftRequest || !user?.es_admin || !selectedRequest) return;
     setIsSaving(true);
     
     try {
-      const updatedRequest = await apiService.updateRequestStatus(draftRequest.id_solicitud, draftRequest.estado);
+      let currentRequest = { ...selectedRequest };
       
-      if (updatedRequest) {
-        setRequests(prevRequests => 
-          prevRequests.map(r => r.id_solicitud === updatedRequest.id_solicitud ? updatedRequest : r)
-        );
-        setSelectedRequest(updatedRequest);
-        setDraftRequest(updatedRequest);
-      } else {
-        setRequests(prevRequests => 
-          prevRequests.map(r => r.id_solicitud === draftRequest.id_solicitud ? { ...r, estado: draftRequest.estado } : r)
-        );
-        setSelectedRequest(draftRequest);
+      // Update Estado if changed
+      if (draftRequest.estado !== selectedRequest.estado) {
+        const updated = await apiService.updateRequestStatus(draftRequest.id_solicitud, draftRequest.estado);
+        if (updated) {
+          currentRequest = { ...currentRequest, ...updated };
+        } else {
+          currentRequest = { ...currentRequest, estado: draftRequest.estado };
+        }
       }
+      
+      // Update Prioridad if changed
+      const currentPriority = selectedRequest.prioridad || 'Media';
+      const draftPriority = draftRequest.prioridad || 'Media';
+      if (draftPriority !== currentPriority) {
+        const updated = await apiService.updateRequestPriority(draftRequest.id_solicitud, draftPriority);
+        if (updated) {
+          currentRequest = { ...currentRequest, ...updated };
+        } else {
+          currentRequest = { ...currentRequest, prioridad: draftPriority };
+        }
+      }
+      
+      // Update Categoria (Tipo de Solicitud) if changed
+      if (draftRequest.tipo_solicitud !== selectedRequest.tipo_solicitud) {
+        const updated = await apiService.updateRequestCategory(draftRequest.id_solicitud, draftRequest.tipo_solicitud);
+        if (updated) {
+          currentRequest = { ...currentRequest, ...updated };
+        } else {
+          currentRequest = { ...currentRequest, tipo_solicitud: draftRequest.tipo_solicitud };
+        }
+      }
+      
+      setRequests(prevRequests => 
+        prevRequests.map(r => r.id_solicitud === currentRequest.id_solicitud ? currentRequest : r)
+      );
+      setSelectedRequest(currentRequest);
+      setDraftRequest(currentRequest);
       
       setShowSuccessMessage(true);
     } catch (e) {
       console.error(e);
-      alert("Error al actualizar el estado. Verifique su conexión.");
+      alert("Error al actualizar la solicitud. Verifique su conexión.");
     } finally {
       setIsSaving(false);
     }
@@ -324,15 +349,29 @@ export const Inbox = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-1.5">Categoría</label>
-                        <div className="w-full px-3 py-2 rounded-lg border border-white bg-white text-sm shadow-sm text-brand-black font-medium opacity-70">
-                          {draftRequest.tipo_solicitud}
-                        </div>
+                        <select
+                          className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm shadow-sm text-brand-black font-medium focus:outline-none focus:ring-2 focus:ring-brand-gold/50 cursor-pointer"
+                          value={draftRequest.tipo_solicitud}
+                          onChange={(e) => handleDraftChange('tipo_solicitud', e.target.value)}
+                        >
+                          <option value="Peticion">Peticion</option>
+                          <option value="Queja">Queja</option>
+                          <option value="Sugerencia">Sugerencia</option>
+                          <option value="Reclamo">Reclamo</option>
+                          <option value="Denuncia">Denuncia</option>
+                        </select>
                       </div>
                       <div>
                         <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide block mb-1.5">Prioridad</label>
-                        <div className="w-full px-3 py-2 rounded-lg border border-white bg-white text-sm shadow-sm text-brand-black font-medium opacity-70">
-                          {draftRequest.prioridad || 'Media'}
-                        </div>
+                        <select
+                          className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm shadow-sm text-brand-black font-medium focus:outline-none focus:ring-2 focus:ring-brand-gold/50 cursor-pointer"
+                          value={draftRequest.prioridad || 'Media'}
+                          onChange={(e) => handleDraftChange('prioridad', e.target.value)}
+                        >
+                          <option value="Alta">Alta</option>
+                          <option value="Media">Media</option>
+                          <option value="Baja">Baja</option>
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -384,7 +423,14 @@ export const Inbox = () => {
                 )}
                 <button
                   onClick={handleSaveChanges}
-                  disabled={isSaving || (selectedRequest && draftRequest.estado === selectedRequest.estado)}
+                  disabled={
+                    isSaving || 
+                    (selectedRequest && 
+                      draftRequest.estado === selectedRequest.estado && 
+                      (draftRequest.prioridad || 'Media') === (selectedRequest.prioridad || 'Media') && 
+                      draftRequest.tipo_solicitud === selectedRequest.tipo_solicitud
+                    )
+                  }
                   className="w-full flex items-center justify-center gap-2 bg-brand-black hover:bg-gray-900 text-white px-6 py-3.5 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] shadow-md"
                 >
                   {isSaving ? (
